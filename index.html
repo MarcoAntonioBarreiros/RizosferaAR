@@ -55,9 +55,9 @@
 
       var buildUrl = "Build";
       var config = {
-        dataUrl: buildUrl + "/Web_w8.data.unityweb",
-        frameworkUrl: buildUrl + "/Web_w8.framework.js.unityweb",
-        codeUrl: buildUrl + "/Web_w8.wasm.unityweb",
+        dataUrl: buildUrl + "/Web_w9.data.unityweb",
+        frameworkUrl: buildUrl + "/Web_w9.framework.js.unityweb",
+        codeUrl: buildUrl + "/Web_w9.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Marco",
         productName: "Rizosfera AR",
@@ -86,7 +86,7 @@
       });
 
       var script = document.createElement("script");
-      script.src = buildUrl + "/Web_w8.loader.js";
+      script.src = buildUrl + "/Web_w9.loader.js";
       script.onload = function () {
         createUnityInstance(canvas, config, function (p) {
           cheio.style.width = Math.round(100 * p) + "%";
