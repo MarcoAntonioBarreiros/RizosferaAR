@@ -11,8 +11,10 @@ sem instalar nada.
 1. Abra o link no celular (Chrome no Android, Safari no iPhone), ligue o som e toque em **Começar**.
 2. Permita o uso da **câmera** e do **movimento do celular**.
 3. Gire o celular para olhar em volta e **toque no portal** para entrar (ou segure a seta ▲).
-4. Lá dentro, use ▲ ▼ para andar, **Centralizar** para ficar de frente para a raiz, o **Scanner** para
-   identificar os elementos e toque nos nódulos para acendê-los.
+4. Lá dentro, use ▲ ▼ para andar e **Centralizar** para ficar de frente para a raiz.
+   **Toque em qualquer elemento** (raiz, pelo radicular, rizobactéria, exsudato, nódulo, N₂) para ver o nome e
+   ouvir a explicação. Tocar num nódulo também o acende; no primeiro, começa a história do nódulo, que para
+   se você tocar em outro elemento.
 5. Segure **↺ Recomeçar** (canto superior esquerdo) para reiniciar.
 
 No computador: arraste com o mouse para olhar e use W/S (ou as setas) para andar.
