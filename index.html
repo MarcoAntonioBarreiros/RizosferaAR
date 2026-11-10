@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#140e09">
+    <title>Rizosfera</title>
+    <style>
+      :root { --fundo: #140e09; --texto: #f6ecd6; --ambar: #f2b04a; --suave: #c9b89a; }
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--fundo);
+        color: var(--texto); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+      #unity-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: var(--fundo); touch-action: none; outline: none; }
+      #capa { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 22px; padding: 24px; box-sizing: border-box; text-align: center;
+        background: radial-gradient(ellipse at 50% 38%, #3a2a17 0%, #1d140c 55%, var(--fundo) 100%); transition: opacity .6s; }
+      #capa.sumindo { opacity: 0; pointer-events: none; }
+      h1 { margin: 0; font-weight: 400; font-size: clamp(22px, 6vw, 34px); line-height: 1.15; }
+      h1 b { display: block; font-size: 1.7em; letter-spacing: .02em; color: #ffe7b8; }
+      #barra { width: min(78vw, 360px); height: 8px; border-radius: 4px; background: rgba(255,255,255,.12); overflow: hidden; }
+      #cheio { width: 0; height: 100%; background: var(--ambar); transition: width .2s; }
+      #estado { margin: 0; color: var(--suave); font-size: 15px; min-height: 1.2em; }
+      #comecar { font: inherit; font-size: 20px; font-weight: 600; padding: 16px 44px; border-radius: 999px; border: 0;
+        background: var(--ambar); color: #2a1a08; box-shadow: 0 6px 24px rgba(242,176,74,.35); cursor: pointer; }
+      #comecar:disabled { opacity: .35; box-shadow: none; cursor: default; }
+      .dica { max-width: 420px; margin: 0; color: var(--suave); font-size: 14px; line-height: 1.45; }
+      #erro { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20; display: none; padding: 12px 14px;
+        border-radius: 10px; background: #5a1d14; color: #fff; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="capa">
+      <h1>Bem-vindos à<b>Rizosfera</b></h1>
+      <div id="barra"><div id="cheio"></div></div>
+      <p id="estado">Carregando…</p>
+      <button id="comecar" disabled>Começar</button>
+      <p class="dica">Ligue o som. O navegador vai pedir para usar a <b>câmera</b> e o <b>movimento do celular</b>:
+        toque em permitir. Gire o celular para olhar em volta e toque no portal para entrar.</p>
+    </div>
+    <div id="erro"></div>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      var capa = document.querySelector("#capa");
+      var cheio = document.querySelector("#cheio");
+      var estado = document.querySelector("#estado");
+      var botao = document.querySelector("#comecar");
+      var erro = document.querySelector("#erro");
+      var movel = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+                  (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent)); // iPad "desktop"
+      var instancia = null;
+
+      function mostrarErro(msg) { erro.textContent = msg; erro.style.display = "block"; }
+      function banner(msg, tipo) { if (tipo == "error") mostrarErro(msg); else console.warn(msg); }
+
+      var buildUrl = "Build";
+      var config = {
+        dataUrl: buildUrl + "/Web_w3.data.unityweb",
+        frameworkUrl: buildUrl + "/Web_w3.framework.js.unityweb",
+        codeUrl: buildUrl + "/Web_w3.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Marco",
+        productName: "Rizosfera AR",
+        productVersion: "0.1",
+        showBanner: banner,
+        // menos pixels no celular = mais fluido (a tela de 3x pesa demais no navegador)
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, movel ? 1.5 : 2)
+      };
+
+      botao.addEventListener("click", function () {
+        if (!instancia) return;
+        botao.disabled = true;
+        var pedido = Promise.resolve();
+        // iPhone/iPad: o movimento do celular só funciona depois desta permissão (precisa ser no toque)
+        if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+          pedido = DeviceOrientationEvent.requestPermission().catch(function () { return "denied"; });
+        }
+        // câmera e giroscópio são ligados pelo Unity ainda dentro deste toque
+        instancia.SendMessage("Rig Web", "Comecar", movel ? "movel" : "pc");
+        pedido.then(function () {
+          try { if (movel && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {}); } catch (e) {}
+          try { if (navigator.wakeLock) navigator.wakeLock.request("screen").catch(function () {}); } catch (e) {}
+          capa.classList.add("sumindo");
+          setTimeout(function () { capa.style.display = "none"; canvas.focus(); }, 650);
+        });
+      });
+
+      var script = document.createElement("script");
+      script.src = buildUrl + "/Web_w3.loader.js";
+      script.onload = function () {
+        createUnityInstance(canvas, config, function (p) {
+          cheio.style.width = Math.round(100 * p) + "%";
+          estado.textContent = "Carregando… " + Math.round(100 * p) + "%";
+        }).then(function (u) {
+          instancia = u;
+          cheio.style.width = "100%";
+          estado.textContent = "Pronto!";
+          botao.disabled = false;
+        }).catch(function (msg) {
+          estado.textContent = "";
+          mostrarErro("Não foi possível abrir a Rizosfera neste navegador: " + msg);
+        });
+      };
+      script.onerror = function () { mostrarErro("Falha ao baixar os arquivos. Verifique a internet e recarregue a página."); };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
