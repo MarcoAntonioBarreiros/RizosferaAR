@@ -13,8 +13,10 @@ sem instalar nada.
 3. Gire o celular para olhar em volta e **toque no portal** para entrar (ou segure a seta ▲).
 4. Lá dentro, use ▲ ▼ para andar e **Centralizar** para ficar de frente para a raiz.
    **Toque em qualquer elemento** (raiz, pelo radicular, rizobactéria, exsudato, nódulo, N₂) para ver o nome e
-   ouvir a explicação. Tocar num nódulo também o acende; no primeiro, começa a história do nódulo, que para
-   se você tocar em outro elemento.
+   ouvir a explicação.
+   **Nódulos:** o primeiro que você tocar acende na hora e começa a história do nódulo (que para se você tocar
+   em outro elemento). Depois disso, um toque num nódulo mostra o nome; um segundo toque no mesmo nódulo
+   (enquanto o nome está na tela) acende ou apaga.
 5. Segure **↺ Recomeçar** (canto superior esquerdo) para reiniciar.
 
 No computador: arraste com o mouse para olhar e use W/S (ou as setas) para andar.
